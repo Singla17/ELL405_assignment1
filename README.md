@@ -1,3 +1,4 @@
 # OS Assignments      
 ## Prof. Smruti Sarangi        
-### Sem-6 
+### 6th Semester
+#### Assignment-1 : System calls,IPC,Processes 
