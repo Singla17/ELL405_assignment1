@@ -1,0 +1,6 @@
+syscall.h
+defs.h-> proc.c
+user.h
+sysproc.c -> code to be written in this.
+usys.S (assembly code)
+syscall.c 
