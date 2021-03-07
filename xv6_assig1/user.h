@@ -29,6 +29,8 @@ int add(int,int);
 void ps(void);
 int send(int,int,void*);
 int recv(void*);
+void store(int,int);
+int sums(void);
 
 // ulib.c
 int stat(const char*, struct stat*);

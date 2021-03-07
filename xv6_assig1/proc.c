@@ -12,8 +12,8 @@ struct {
   struct proc proc[NPROC];
 } ptable;
 ////////////////////////////////////////////////////////////////////////
-char messages[NPROC][1][8];
-int limit =1;                 // the mail box of different processes.
+char messages[NPROC][8][8];
+int limit =8;                 // the mail box of different processes.
 int num_msg[NPROC] = {0};        
 /////////////////////////////////////////////////////////////////////////
 static struct proc *initproc;

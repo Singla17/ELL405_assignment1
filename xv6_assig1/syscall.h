@@ -26,3 +26,5 @@
 #define SYS_ps     25
 #define SYS_send   26
 #define SYS_recv   27
+#define SYS_store  28
+#define SYS_sums   29

@@ -124,8 +124,10 @@ int             toggle(void);
 int 		print_count(void);
 int		add(int , int);
 void		ps(void);
-int 		send(int sender_pid,int rec_pid,void *msg);
-int 		recv(void *msg);
+int 		send(int ,int ,void*);
+int 		recv(void*);
+void		store(int,int);
+int		sums(void);
 
 // swtch.S
 void            swtch(struct context**, struct context*);
