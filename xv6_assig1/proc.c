@@ -11,7 +11,11 @@ struct {
   struct spinlock lock;
   struct proc proc[NPROC];
 } ptable;
-
+////////////////////////////////////////////////////////////////////////
+char messages[NPROC][1][8];
+int limit =1;                 // the mail box of different processes.
+int num_msg[NPROC] = {0};        
+/////////////////////////////////////////////////////////////////////////
 static struct proc *initproc;
 
 int nextpid = 1;
@@ -275,14 +279,14 @@ ps(void)
 	acquire(&ptable.lock);
 	for(p = ptable.proc; p < &ptable.proc[NPROC]; p++)
 	{
- 		 if( p->state != EMBRYO && p->state != ZOMBIE && p->state!=UNUSED)  // i tried diefferent combinations so as to check which cobination gives result as expected output in check scripts.
+ 		 if( p->pid!=0) 
 		 {
      		 	cprintf("pid:%d ",p->pid);
 			cprintf("name:%s\n",p->name);
    		 }     
         }
 	release(&ptable.lock);
-	
+
 }
 
 // Wait for a child process to exit and return its pid.
@@ -328,7 +332,51 @@ wait(void)
     sleep(curproc, &ptable.lock);  //DOC: wait-sleep
   }
 }
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+int
+sendp(int send_pid , int rec_pid, char *msg){
 
+     if(num_msg[rec_pid]==limit)
+     {
+     	return -1;                          // this is the bounded buffer limit.
+     }
+     else
+     {
+	for (int i =0 ; i<MSGSIZE; i++)
+	{
+		messages[rec_pid][num_msg[rec_pid]][i] = *(msg+i);   // storing the message in the mailbox
+	}
+	num_msg[rec_pid]++;  // the next message to be stored in next location
+	struct proc *pr= &ptable.proc[rec_pid];   // one needs to wakeup the recieving process if asleep
+    	wakeup(pr);                               // wakeup function handles if the process wasn't sleeping
+	return 0;
+     }
+}
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+int 
+recvp(char *msg)
+{
+
+  struct proc *curproc = myproc();    // This is used to get pid 
+  int rpid = curproc->pid;            // of the current process, learnt by grep "pid" *.c
+  
+  if(num_msg[rpid] == 0)
+  {
+	  struct proc *pr;                      // we need to get current process from process table as sleep and wakeup should have same chan. no.
+   	  pr = &ptable.proc[rpid];              // and as seen in sleep calls in other functions in this c file we normaly do that by passing the address of the process 
+	  acquire(&ptable.lock);                // and to make sure we are using the same pointer we access the process from ptable.
+    	  sleep(pr, &ptable.lock);              // Sleep didm't work without acquiring locks expilicty although is does it internally - don't know why
+          release(&ptable.lock);	        // for correct usage of sleep refer -https://pdos.csail.mit.edu/6.828/2011/lec/l-coordination.html
+  }
+                                                 // can't use else beacuse then the else block won't be able to execute and our message won't get stored in the return pointer 
+  num_msg[rpid]--;
+  for(int i=0; i<MSGSIZE; i++)
+   {                          
+   	*(msg+i)= messages[rpid][num_msg[rpid]][i];         // this is just saving the stored mesage into our input pointer 
+   } 
+   return 0;
+}
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //PAGEBREAK: 42
 // Per-CPU process scheduler.
 // Each CPU calls scheduler() after setting itself up.

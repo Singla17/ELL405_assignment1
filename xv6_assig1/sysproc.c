@@ -6,9 +6,15 @@
 #include "memlayout.h"
 #include "mmu.h"
 #include "proc.h"
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 int trace_off =1; // initialized trace_off variable
-int count_calls[25] = {0}; // initialized the count_calls array
+int count_calls[27] = {0}; // initialized the count_calls array
 extern void ps(void);
+extern int sendp();
+extern int recvp();
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
 int
 sys_fork(void)
 {
@@ -91,23 +97,26 @@ sys_uptime(void)
   release(&tickslock);
   return xticks;
 }
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 int 
 sys_toggle(void)
 {
 if(trace_off==1) 
 	{
-	  trace_off=0;
+	  	trace_off=0;
 	}
 else
 	{
-	trace_off=1;
-	for( int i =0; i<25;i++)
+		for(int i =0 ; i<27;i++)
 		{
-	 	 count_calls[i]=0;            // removing the data of previously stored system calls
+			count_calls[i]=0;    /// so that the perivous count gets erased
 		}
+		trace_off=1;
 	}
 return 0;
 }
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 int               
 sys_print_count(void)    // hard coded as the number of systesm calls won't change once a kernel is booted
 {
@@ -167,8 +176,14 @@ if(count_calls[24]!=0){
 if(count_calls[4]!=0){
     cprintf("%s %d\n","sys_read",count_calls[4]);
  }
+if(count_calls[26]!=0){
+    cprintf("%s %d\n","sys_recv",count_calls[26]);
+ }
 if(count_calls[11]!=0){
     cprintf("%s %d\n","sys_sbrk",count_calls[11]);
+ }
+if(count_calls[25]!=0){
+    cprintf("%s %d\n","sys_send",count_calls[25]);
  }
 if(count_calls[12]!=0){
     cprintf("%s %d\n","sys_sleep",count_calls[12]);
@@ -190,21 +205,47 @@ if(count_calls[15]!=0){
  }
 return 0;
 }
+
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 int 
 sys_add(int a, int b)
 {
 	int c =0;     // argint() is a method to take in input parameters inherent to xv6
 	 if(argint(0, &a) < 0){ // a check just as the xv6 does
-    		cprintf("error");
 		 return -1;}
   	if(argint(1, &b) < 0){	// a check just as the xv6 does
-		cprintf("error");
     		return -1;}
 	c=a+b;
 return c;
 }
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
 sys_ps(void)
 {
-	ps();
+	ps();    // helper function as one needs to access ptable which can only be done in proc.c
 }
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+int 
+sys_send(int sender_pid, int rec_pid, void *msg)
+{
+	char* ptr = (char*)msg;
+	if(argint(0, &sender_pid) < 0){  // a check just as the xv6 does
+                return -1;}
+	if(argint(1, &rec_pid) < 0){  // a check just as the xv6 does
+                return -1;}
+	if(argstr(2,&ptr) < 0){  // a check just as the xv6 does
+                return -1;}
+	return  sendp(sender_pid,rec_pid,ptr);     // helper function implemented in proc.c
+}
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+int 
+sys_recv(void *msg)
+{
+	 char* ptr = (char*)msg;
+	 if(argstr(0,&ptr) < 0){  // a check just as the xv6 does
+                return -1;}
+          return recvp(ptr);   // helper function implemented in proc.c
+}
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

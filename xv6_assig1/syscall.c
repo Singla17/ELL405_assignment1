@@ -107,6 +107,8 @@ extern int sys_toggle(void);
 extern int sys_print_count(void);
 extern int sys_add(void);
 extern int sys_ps(void);
+extern int sys_send(void);
+extern int sys_recv(void);
 extern int trace_off;
 
 static int (*syscalls[])(void) = {
@@ -135,9 +137,11 @@ static int (*syscalls[])(void) = {
 [SYS_print_count]  sys_print_count,
 [SYS_add]     sys_add,
 [SYS_ps]      sys_ps,
+[SYS_send]    sys_send,
+[SYS_recv]    sys_recv,
 };
 // tried to define an extern array with size stored in a variable couldn't do it so had to hard code it
-extern int count_calls[25]; 
+extern int count_calls[27]; 
 // an external declaration as i would need to accesss count_calls in sysproc.c as well 
  
 
