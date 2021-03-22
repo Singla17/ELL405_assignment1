@@ -45,11 +45,11 @@ main(int argc, char *argv[])
 		recv(msg);                                                 // coordinating process, implying that it's done before sending this message it stores the sum obtained by it in a shared 
 		recv(msg);                                                 // memory using 'store' system call and then the subprocess exits so here the coordinating process waits for message of each 
 		recv(msg);                                                 // of subprocess so total 7 recieves after recieving 7 such messages it means the shared memory is populated with the correct
-		recv(msg);                                                 // sums of each of subprocess so it uses 'sums' system call to get the final sum.
-		tot_sum = sums();	
+		recv(msg);                                                 // sums of each of subprocess so it uses 'sums' system call to get the final sum.	
 		wait();
 		wait();							   // parent of 3 processes ... to prevent zombies
 		wait();
+		tot_sum=sums();
 	}
 	else if (a>0 && b>0 && c2==0)
 	{

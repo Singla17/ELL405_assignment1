@@ -112,7 +112,7 @@ else
 		{
 			count_calls[i]=0;    /// so that the perivous count gets erased
 		}
-		trace_off=1;
+		trace_off=3;
 	}
 return 0;
 }
