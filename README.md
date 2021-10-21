@@ -13,4 +13,4 @@ The code can be found inside the xv6_assig1 directory.
 2. You can take a look at all the programs stored and run any program by simply calling it's name
 3. For exiting: Ctrl+Alt+q (if make qemu was used) / Ctrl-a x (if make qemu-nox was used)     
          
-The detailed report can be found [here](Report.pdf) and the overview of the theory of various utilties added to xv6 can be found [here](Overview.odp).
+The detailed report can be found [here](report.pdf) and the overview of the theory of various utilties added to xv6 can be found [here](Overview.odp).
